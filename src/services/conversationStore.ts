@@ -16,13 +16,10 @@ export class ConversationStore {
       if (fs.existsSync(this.filePath)) {
         const data = fs.readFileSync(this.filePath, 'utf-8');
         this.conversations = JSON.parse(data);
-        console.log('Conversaciones cargadas desde archivo');
       } else {
-        console.log('Archivo de conversaciones no existe, creando uno nuevo');
         this.saveConversations();
       }
     } catch (error) {
-      console.error('Error al cargar conversaciones:', error);
       this.conversations = {};
     }
   }
@@ -35,7 +32,7 @@ export class ConversationStore {
       }
       fs.writeFileSync(this.filePath, JSON.stringify(this.conversations, null, 2));
     } catch (error) {
-      console.error('Error al guardar conversaciones:', error);
+      // Error silencioso al guardar
     }
   }
 

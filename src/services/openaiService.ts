@@ -34,7 +34,6 @@ Cuando proporciones información sobre una cita, asegúrate de mencionar todos l
 
       return completion.choices[0]?.message?.content || 'Lo siento, no pude generar una respuesta.';
     } catch (error) {
-      console.error('Error al generar respuesta de OpenAI:', error);
       throw new Error('Error al comunicarse con OpenAI');
     }
   }
@@ -63,7 +62,6 @@ El mensaje debe ser breve, claro y mencionar que pueden hacer preguntas si tiene
 
       return completion.choices[0]?.message?.content || 'Error al generar mensaje';
     } catch (error) {
-      console.error('Error al generar mensaje de mediación:', error);
       throw new Error('Error al generar mensaje de mediación');
     }
   }

@@ -96,7 +96,6 @@ bot.on('text', async (ctx) => {
 
     await ctx.reply(response);
   } catch (error) {
-    console.error('Error procesando mensaje:', error);
     await ctx.reply('Lo siento, ocurrió un error al procesar tu mensaje. Por favor intenta nuevamente.');
   }
 });
@@ -148,8 +147,6 @@ app.post('/api/send-mediation', async (req, res) => {
         chatId: userId
       });
     } catch (telegramError: any) {
-      console.error('Error enviando mensaje de Telegram:', telegramError);
-      
       let errorMessage = 'No se pudo enviar el mensaje.';
       let hint = '';
       
@@ -170,7 +167,6 @@ app.post('/api/send-mediation', async (req, res) => {
       });
     }
   } catch (error: any) {
-    console.error('Error en endpoint de mediación:', error);
     return res.status(500).json({
       error: 'Error interno del servidor',
       details: error.message
@@ -214,33 +210,14 @@ app.get('/health', (req, res) => {
 
 async function start() {
   // Iniciar servidor Express primero para que esté disponible incluso si el bot falla
-  app.listen(PORT, () => {
-    console.log(`Servidor Express escuchando en puerto ${PORT}`);
-    console.log(`Endpoint de mediación: http://localhost:${PORT}/api/send-mediation`);
-    console.log(`Health check: http://localhost:${PORT}/health`);
-  });
+  app.listen(PORT);
 
   // Intentar iniciar el bot de Telegram
   try {
     await bot.launch();
-    console.log('Bot de Telegram iniciado correctamente');
-
     process.once('SIGINT', () => bot.stop('SIGINT'));
     process.once('SIGTERM', () => bot.stop('SIGTERM'));
   } catch (error: any) {
-    if (error?.response?.error_code === 409) {
-      console.error('⚠️  Advertencia: Ya hay otra instancia del bot corriendo.');
-      console.error('   Telegram solo permite una instancia del bot a la vez.');
-      console.error('   El servidor Express está funcionando, pero el bot no puede recibir mensajes.');
-      console.error('   Solución: Detén otros procesos del bot antes de iniciar este.');
-      console.error('   Puedes usar: pkill -f "tsx watch src/index.ts"');
-      console.error('');
-      console.error('   El servidor API seguirá funcionando para enviar mensajes manualmente.');
-    } else {
-      console.error('⚠️  Advertencia: Error al iniciar el bot de Telegram:', error?.message || error);
-      console.error('   El servidor Express está funcionando, pero el bot no puede recibir mensajes.');
-      console.error('   El servidor API seguirá funcionando para enviar mensajes manualmente.');
-    }
     // No salir del proceso, permitir que el servidor Express siga funcionando
   }
 }

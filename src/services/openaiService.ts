@@ -39,7 +39,7 @@ Cuando proporciones información sobre una cita, asegúrate de mencionar todos l
   }
 
   async generateMediationMessage(appointmentData: MediationAppointment): Promise<string> {
-    const prompt = `Genera un mensaje amigable y profesional para informar a alguien sobre su cita de mediación familiar con los siguientes datos:
+    const prompt = `Genera un mensaje amigable, cálido y profesional para informar a alguien sobre su cita de mediación familiar con los siguientes datos:
 - Nombre: ${appointmentData.nombre}
 - Fecha: ${appointmentData.fecha}
 - Hora: ${appointmentData.hora}
@@ -47,7 +47,13 @@ Cuando proporciones información sobre una cita, asegúrate de mencionar todos l
 ${appointmentData.mediador ? `- Mediador: ${appointmentData.mediador}` : ''}
 ${appointmentData.notasAdicionales ? `- Notas adicionales: ${appointmentData.notasAdicionales}` : ''}
 
-El mensaje debe ser breve, claro y mencionar que pueden hacer preguntas si tienen dudas.`;
+El mensaje debe:
+- Ser cordial y empático
+- Incluir todos los detalles de la cita de forma clara
+- Mencionar que estamos disponibles para cualquier pregunta o duda
+- Ser conciso pero completo
+
+NO incluyas ninguna firma o despedida al final, yo la agregaré.`;
 
     try {
       const completion = await this.client.chat.completions.create({
@@ -60,7 +66,10 @@ El mensaje debe ser breve, claro y mencionar que pueden hacer preguntas si tiene
         max_tokens: 300
       });
 
-      return completion.choices[0]?.message?.content || 'Error al generar mensaje';
+      const generatedMessage = completion.choices[0]?.message?.content || 'Error al generar mensaje';
+
+      // Agregar firma de Wakai Team
+      return `${generatedMessage}\n\n---\nWakai Team`;
     } catch (error) {
       throw new Error('Error al generar mensaje de mediación');
     }
